@@ -1,1 +1,1 @@
-# BTDesign is a R package to design and analyze basket trials with a variety of methods.
+# BTDesign is a R package for design and analysis of basket trials using a a variety of methods.
