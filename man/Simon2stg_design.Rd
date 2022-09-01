@@ -4,7 +4,15 @@
 \alias{Simon2stg_design}
 \title{Title Function to find the optimal bar at stage-1 for Simon's 2-stage design}
 \usage{
-Simon2stg_design(n.s2stg, n1.s2stg, p0.s2stg, p1.s2stg, r1.s2stg, r.s2stg)
+Simon2stg_design(
+  n.s2stg,
+  n1.s2stg,
+  p0.s2stg,
+  p1.s2stg,
+  r1.s2stg,
+  r.s2stg,
+  alpha
+)
 }
 \arguments{
 \item{n.s2stg}{total sample size at the end of stage-2}
@@ -18,9 +26,11 @@ Simon2stg_design(n.s2stg, n1.s2stg, p0.s2stg, p1.s2stg, r1.s2stg, r.s2stg)
 \item{r1.s2stg}{a vector of possible response bar at stage-1 to be search for the optimal bar}
 
 \item{r.s2stg}{upper bound in search for the stopping bar at end of stage. e.g.,r.s2stg=n.s2stg. A smaller value would save computation time}
+
+\item{alpha}{FWER}
 }
 \value{
-A dataframe with searched designs with design aspects inclduing sample size across stages, stopping bar across stages, type 1 error, power and stopping prob. at stage-1
+A list with the first element for the picked design and the second element for a data frame with all searched designs with design aspects including sample size across stages, stopping bar across stages, type 1 error, power and stopping prob. at stage-1
 }
 \description{
 Title Function to find the optimal bar at stage-1 for Simon's 2-stage design
@@ -32,8 +42,6 @@ p0.s2stg  <- 0.2
 p1.s2stg  <- 0.4
 r1.s2stg <- seq(1,19,1)
 r.s2stg  <- 40
-sum.2stage <- Simon2stg_design(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg )
-alpha.simon2stg <- 1-(1-0.1)^(1/4)
-sum.2stage.val <- subset(sum.2stage,Type1<alpha.simon2stg)
-sum.2stage.pick <- sum.2stage.val[sum.2stage.val$Power==max(sum.2stage.val$Power),]
+sum.2stage <- Simon2stg_design(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg, alpha=1-(1-0.1)^(1/4) )
+sum.2stage[[1]]
 }

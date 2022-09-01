@@ -68,8 +68,9 @@ EN <- function(r1,n1,p,n){
 #' @param p1.s2stg response rate under alternative
 #' @param r1.s2stg a vector of possible response bar at stage-1 to be search for the optimal bar
 #' @param r.s2stg  upper bound in search for the stopping bar at end of stage. e.g.,r.s2stg=n.s2stg. A smaller value would save computation time
+#' @param alpha FWER
 #'
-#' @return A dataframe with searched designs with design aspects inclduing sample size across stages, stopping bar across stages, type 1 error, power and stopping prob. at stage-1
+#' @return A list with the first element for the picked design and the second element for a data frame with all searched designs with design aspects including sample size across stages, stopping bar across stages, type 1 error, power and stopping prob. at stage-1
 #' @export
 #'
 #' @examples
@@ -79,13 +80,11 @@ EN <- function(r1,n1,p,n){
 #' p1.s2stg  <- 0.4
 #' r1.s2stg <- seq(1,19,1)
 #' r.s2stg  <- 40
-#' sum.2stage <- Simon2stg_design(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg )
-#' alpha.simon2stg <- 1-(1-0.1)^(1/4)
-#' sum.2stage.val <- subset(sum.2stage,Type1<alpha.simon2stg)
-#' sum.2stage.pick <- sum.2stage.val[sum.2stage.val$Power==max(sum.2stage.val$Power),]
+#' sum.2stage <- Simon2stg_design(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg, alpha=1-(1-0.1)^(1/4) )
+#' sum.2stage[[1]]
 
 
-Simon2stg_design <- function(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg ){
+Simon2stg_design <- function(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2stg ,alpha){
 
   sum.2stage <- data.frame(n=NA,n1=NA,r1=NA,r=NA,Type1=NA, Power=NA, EN=NA, PET=NA )
 
@@ -110,7 +109,14 @@ Simon2stg_design <- function(n.s2stg,n1.s2stg,p0.s2stg ,p1.s2stg,r1.s2stg,r.s2st
     }
   }
   sum.2stage <- sum.2stage[-1,]
-  return(sum.2stage)
+  sum.2stage.val <- subset(sum.2stage,Type1<alpha)
+  sum.2stage.pick <- sum.2stage.val[sum.2stage.val$Power==max(sum.2stage.val$Power),]
+
+  res <- list()
+  res[[1]] <- sum.2stage.pick
+  res[[2]] <- sum.2stage
+  names(res) <- c('Picked',"Designs")
+  return(res)
 
 }
 
@@ -142,6 +148,6 @@ Simon2stg_analysis <- function(n1.s2stg,n.s2stg ,r1.s2stg , r.s2stg ,r.ia,r){
       rej <- 1
     }
   }
-  res <- c(rej,n.tot)
+  res <- data.frame(rej=rej,totN=n.tot)
   return(res)
 }
